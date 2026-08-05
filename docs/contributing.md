@@ -2,9 +2,10 @@
 
 ## Principles
 
-- **Pure Go, zero cgo.** The Go standard library's crypto packages only. Every
+- **Pure Go, zero cgo.** PKCS7 uses the Go standard library's crypto packages
+  only; GPG adds the pure-Go, CGO-free `ProtonMail/go-crypto/openpgp`. Every
   interaction with the outside world goes through an injectable seam.
-- **Interoperable with hiera-eyaml's pkcs7 tokens.**
+- **Interoperable with hiera-eyaml's pkcs7 and gpg tokens.**
 - **100% coverage, including error branches.** New code adds its logic as pure,
   testable functions and wires I/O through seams, so tests cover both the happy
   path and every failure path with fixture injection.
