@@ -9,7 +9,8 @@ dependency on Ruby or on a C toolchain.
 
 ## Static, portable, embeddable
 
-Because it is pure Go and imports the Go standard library's crypto packages only, go-eyaml compiles with cgo disabled,
+Because it is pure Go — the PKCS7 scheme on the standard library's crypto packages alone, the GPG scheme adding only
+the pure-Go `ProtonMail/go-crypto/openpgp` implementation — go-eyaml compiles with cgo disabled,
 cross-compiles to every 64-bit Go target (amd64, arm64, riscv64, loong64, ppc64le, s390x) and to WebAssembly, and links
 into a single static binary. There is nothing to install alongside it — no shared
 library, no interpreter, no external process it must shell out to.
