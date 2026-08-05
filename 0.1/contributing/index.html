@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 encryption scheme: ENC[PKCS7,…] tokens on standard-library crypto only.">
+        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 and GPG encryption schemes: ENC[PKCS7,…] and ENC[GPG,…] tokens.">
       
       
       
@@ -518,9 +518,10 @@
 <h1 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h1>
 <h2 id="principles">Principles<a class="headerlink" href="#principles" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Pure Go, zero cgo.</strong> The Go standard library's crypto packages only. Every
+<li><strong>Pure Go, zero cgo.</strong> PKCS7 uses the Go standard library's crypto packages
+  only; GPG adds the pure-Go, CGO-free <code>ProtonMail/go-crypto/openpgp</code>. Every
   interaction with the outside world goes through an injectable seam.</li>
-<li><strong>Interoperable with hiera-eyaml's pkcs7 tokens.</strong></li>
+<li><strong>Interoperable with hiera-eyaml's pkcs7 and gpg tokens.</strong></li>
 <li><strong>100% coverage, including error branches.</strong> New code adds its logic as pure,
   testable functions and wires I/O through seams, so tests cover both the happy
   path and every failure path with fixture injection.</li>

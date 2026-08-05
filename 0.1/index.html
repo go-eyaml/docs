@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 encryption scheme: ENC[PKCS7,…] tokens on standard-library crypto only.">
+        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 and GPG encryption schemes: ENC[PKCS7,…] and ENC[GPG,…] tokens.">
       
       
       
@@ -480,8 +480,8 @@
 
 
 <h1 id="go-eyaml">go-eyaml<a class="headerlink" href="#go-eyaml" title="Permanent link">&para;</a></h1>
-<p><strong>eyaml encryption in pure Go — PKCS7 encrypt/decrypt for hiera-eyaml data, stdlib crypto only.</strong></p>
-<p>go-eyaml is a pure-Go (CGO_ENABLED=0) implementation of the encryption scheme used by Puppet's hiera-eyaml: the ENC[PKCS7,<base64>] token format that carries an encrypted value inside otherwise-plaintext YAML. A random 256-bit AES content key encrypts the plaintext with AES-256-CBC, the content key is wrapped for the recipient with RSA PKCS#1 v1.5 under an X.509 certificate, and the whole thing is serialised as a CMS EnvelopedData (RFC 5652) token. It is built exclusively on the standard library's crypto packages — the PKCS#7 / CMS structure is assembled by hand — so it needs no third-party crypto and no cgo. 100% coverage, six arches and WebAssembly.</p>
+<p><strong>eyaml encryption in pure Go — PKCS7 and GPG encrypt/decrypt for hiera-eyaml data, CGO-free.</strong></p>
+<p>go-eyaml is a pure-Go (CGO_ENABLED=0) implementation of the two encryption schemes used by Puppet's hiera-eyaml: the ENC[PKCS7,<base64>] and ENC[GPG,<base64>] token formats that carry an encrypted value inside otherwise-plaintext YAML. For PKCS7, a random 256-bit AES content key encrypts the plaintext with AES-256-CBC, the content key is wrapped for the recipient with RSA PKCS#1 v1.5 under an X.509 certificate, and the whole thing is serialised as a CMS EnvelopedData (RFC 5652) token — built exclusively on the standard library's crypto packages, with the PKCS#7 / CMS structure assembled by hand. For GPG, a session key is public-key-encrypted to one or more recipient OpenPGP keys exactly as <code>gpg --encrypt</code> does, using the maintained pure-Go <code>github.com/ProtonMail/go-crypto/openpgp</code> implementation. Both schemes stay CGO_ENABLED=0. 100% coverage, six arches and WebAssembly.</p>
 <ul>
 <li><strong><a href="why/">Why pure Go</a></strong> — a static, cgo-free engine for the Puppet stack.</li>
 <li><strong><a href="scheme/">The eyaml scheme</a></strong> — the capabilities in detail.</li>
@@ -490,8 +490,8 @@
 </ul>
 <h2 id="guarantees">Guarantees<a class="headerlink" href="#guarantees" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Pure Go, zero cgo.</strong> Imports the Go standard library's crypto packages only; cross-compiles to the six 64-bit Go targets (amd64, arm64, riscv64, loong64, ppc64le, s390x) and WebAssembly, linking into a static binary.</li>
-<li><strong>Interoperable with hiera-eyaml's pkcs7 tokens.</strong></li>
+<li><strong>Pure Go, zero cgo.</strong> PKCS7 imports the Go standard library's crypto packages only; GPG adds the pure-Go, CGO-free <code>ProtonMail/go-crypto/openpgp</code> implementation. Both cross-compile to the six 64-bit Go targets (amd64, arm64, riscv64, loong64, ppc64le, s390x) and WebAssembly, linking into a static binary.</li>
+<li><strong>Interoperable with hiera-eyaml's pkcs7 and gpg tokens.</strong></li>
 <li><strong>100% test coverage</strong> including error branches, enforced as a CI gate.</li>
 </ul>
 

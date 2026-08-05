@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 encryption scheme: ENC[PKCS7,…] tokens on standard-library crypto only.">
+        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 and GPG encryption schemes: ENC[PKCS7,…] and ENC[GPG,…] tokens.">
       
       
       
@@ -525,7 +525,8 @@ and <a href="https://github.com/go-puppet">go-puppet</a>) that provide Puppet-ec
 capabilities as ordinary Go libraries, with <strong><code>CGO_ENABLED=0</code></strong> and no runtime
 dependency on Ruby or on a C toolchain.</p>
 <h2 id="static-portable-embeddable">Static, portable, embeddable<a class="headerlink" href="#static-portable-embeddable" title="Permanent link">&para;</a></h2>
-<p>Because it is pure Go and imports the Go standard library's crypto packages only, go-eyaml compiles with cgo disabled,
+<p>Because it is pure Go — the PKCS7 scheme on the standard library's crypto packages alone, the GPG scheme adding only
+the pure-Go <code>ProtonMail/go-crypto/openpgp</code> implementation — go-eyaml compiles with cgo disabled,
 cross-compiles to every 64-bit Go target (amd64, arm64, riscv64, loong64, ppc64le, s390x) and to WebAssembly, and links
 into a single static binary. There is nothing to install alongside it — no shared
 library, no interpreter, no external process it must shell out to.</p>

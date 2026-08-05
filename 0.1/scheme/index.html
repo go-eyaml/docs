@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 encryption scheme: ENC[PKCS7,…] tokens on standard-library crypto only.">
+        <meta name="description" content="go-eyaml — a pure-Go (CGO_ENABLED=0) implementation of the hiera-eyaml PKCS7 and GPG encryption schemes: ENC[PKCS7,…] and ENC[GPG,…] tokens.">
       
       
       
@@ -373,6 +373,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gpg-encryptor" class="md-nav__link">
+    <span class="md-ellipsis">
+      GPG encryptor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key-management" class="md-nav__link">
     <span class="md-ellipsis">
       Key management
@@ -382,18 +391,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standard-library-crypto-only" class="md-nav__link">
+  <a href="#crypto-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
-      Standard-library crypto only
+      Crypto dependencies
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#pluggable-schemes-gpg-planned" class="md-nav__link">
+  <a href="#pluggable-schemes" class="md-nav__link">
     <span class="md-ellipsis">
-      Pluggable schemes (gpg) ( planned )
+      Pluggable schemes
     </span>
   </a>
   
@@ -512,6 +521,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#gpg-encryptor" class="md-nav__link">
+    <span class="md-ellipsis">
+      GPG encryptor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#key-management" class="md-nav__link">
     <span class="md-ellipsis">
       Key management
@@ -521,18 +539,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standard-library-crypto-only" class="md-nav__link">
+  <a href="#crypto-dependencies" class="md-nav__link">
     <span class="md-ellipsis">
-      Standard-library crypto only
+      Crypto dependencies
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#pluggable-schemes-gpg-planned" class="md-nav__link">
+  <a href="#pluggable-schemes" class="md-nav__link">
     <span class="md-ellipsis">
-      Pluggable schemes (gpg) ( planned )
+      Pluggable schemes
     </span>
   </a>
   
@@ -559,12 +577,14 @@
 <p><code>IsToken</code> / <code>ParseToken</code> / <code>FormatToken</code> for the <code>ENC[PKCS7,&lt;base64&gt;]</code> tokens hiera-eyaml embeds in YAML, tolerant of whitespace-wrapped values.</p>
 <h2 id="pkcs7-encryptor">PKCS7 encryptor<a class="headerlink" href="#pkcs7-encryptor" title="Permanent link">&para;</a></h2>
 <p>A random AES-256 content key (AES-256-CBC, PKCS#7 padding) wrapped with RSA PKCS#1 v1.5 under an X.509 certificate, serialised as a CMS EnvelopedData <code>ContentInfo</code> — mirroring hiera-eyaml's <code>pkcs7</code> encryptor.</p>
+<h2 id="gpg-encryptor">GPG encryptor<a class="headerlink" href="#gpg-encryptor" title="Permanent link">&para;</a></h2>
+<p>A session key is public-key-encrypted to one or more recipient OpenPGP keys and encrypts the payload, exactly as <code>gpg --encrypt</code> does — mirroring hiera-eyaml's <code>gpg</code> (GPGME) encryptor. <code>NewGPG</code> builds the encryptor from armored or binary recipient/secret keyrings, with optional passphrase for protected secret keys; the resulting binary OpenPGP message is base64-wrapped into an <code>ENC[GPG,&lt;base64&gt;]</code> token, byte-for-byte what hiera-eyaml's GPGME encryptor emits.</p>
 <h2 id="key-management">Key management<a class="headerlink" href="#key-management" title="Permanent link">&para;</a></h2>
-<p><code>CreateKeys</code> generates the RSA keypair and self-signed certificate that <code>eyaml createkeys</code> produces; <code>LoadPrivateKey</code> / <code>LoadCertificate</code> read PEM / PKCS8 material.</p>
-<h2 id="standard-library-crypto-only">Standard-library crypto only<a class="headerlink" href="#standard-library-crypto-only" title="Permanent link">&para;</a></h2>
-<p>Built on <code>crypto/rsa</code>, <code>crypto/x509</code>, <code>crypto/aes</code>, <code>crypto/cipher</code>, <code>crypto/rand</code>, <code>encoding/pem</code> and <code>encoding/asn1</code>; the PKCS#7 / CMS structure is hand-assembled — no third-party crypto, no cgo.</p>
-<h2 id="pluggable-schemes-gpg-planned">Pluggable schemes (gpg) <em>( planned )</em><a class="headerlink" href="#pluggable-schemes-gpg-planned" title="Permanent link">&para;</a></h2>
-<p><code>Encryptor</code> is a seam; the hiera-eyaml <code>gpg</code> scheme is intentionally deferred, as it would pull in OpenPGP machinery beyond the standard-library crypto surface.</p>
+<p><code>CreateKeys</code> generates the RSA keypair and self-signed certificate that <code>eyaml createkeys</code> produces; <code>LoadPrivateKey</code> / <code>LoadCertificate</code> read PEM / PKCS8 material for PKCS7; <code>LoadGPGKeyRing</code> reads OpenPGP keyring material for GPG.</p>
+<h2 id="crypto-dependencies">Crypto dependencies<a class="headerlink" href="#crypto-dependencies" title="Permanent link">&para;</a></h2>
+<p>PKCS7 is built exclusively on <code>crypto/rsa</code>, <code>crypto/x509</code>, <code>crypto/aes</code>, <code>crypto/cipher</code>, <code>crypto/rand</code>, <code>encoding/pem</code> and <code>encoding/asn1</code> — the PKCS#7 / CMS structure is hand-assembled, no third-party crypto. GPG adds one dependency, the maintained pure-Go OpenPGP implementation <code>github.com/ProtonMail/go-crypto/openpgp</code>; it is still CGO-free and built from source, so the module as a whole needs no cgo.</p>
+<h2 id="pluggable-schemes">Pluggable schemes<a class="headerlink" href="#pluggable-schemes" title="Permanent link">&para;</a></h2>
+<p><code>Encryptor</code> is a seam — <code>PKCS7</code> and <code>GPG</code> both implement it, and further hiera-eyaml schemes can be added the same way.</p>
 
 
 
